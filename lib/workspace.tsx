@@ -1,6 +1,14 @@
 "use client";
 
-import * as React from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 
 export type Role = "Owner" | "Admin" | "Member";
 
@@ -15,14 +23,14 @@ type WorkspaceContextValue = {
   toasts: Toast[];
 };
 
-const WorkspaceContext = React.createContext<WorkspaceContextValue | null>(null);
+const WorkspaceContext = createContext<WorkspaceContextValue | null>(null);
 
-export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
-  const [role, setRole] = React.useState<Role>("Owner");
-  const [toasts, setToasts] = React.useState<Toast[]>([]);
-  const nextId = React.useRef(0);
+export function WorkspaceProvider({ children }: { children: ReactNode }) {
+  const [role, setRole] = useState<Role>("Owner");
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const nextId = useRef(0);
 
-  const toast = React.useCallback((msg: string) => {
+  const toast = useCallback((msg: string) => {
     const id = ++nextId.current;
     setToasts((prev) => [...prev, { id, msg }]);
     setTimeout(() => {
@@ -30,7 +38,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     }, 3200);
   }, []);
 
-  const value = React.useMemo<WorkspaceContextValue>(
+  const value = useMemo<WorkspaceContextValue>(
     () => ({
       role,
       setRole,
@@ -50,7 +58,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useWorkspace() {
-  const ctx = React.useContext(WorkspaceContext);
+  const ctx = useContext(WorkspaceContext);
   if (!ctx) {
     throw new Error("useWorkspace must be used within a WorkspaceProvider");
   }
