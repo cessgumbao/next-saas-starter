@@ -1,26 +1,154 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
+/* Dark mode is class-based (driven by next-themes) */
+@custom-variant dark (&:is(.dark *));
+
+/* ----------------------------------------------------------------------------
+   Aura design tokens
+   Ported verbatim from the Claude Design prototype (light + dark palettes).
+   Raw values live on :root / .dark; @theme inline exposes them as Tailwind
+   utilities (bg-*, text-*, border-*, shadow-*, etc.).
+---------------------------------------------------------------------------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --radius: 0.625rem; /* 10px — matches the prototype's input/button radius */
+
+  --bg: #faf9fc;
+  --surface: #ffffff;
+  --surface-2: #f5f3f9;
+  --surface-3: #efecf5;
+
+  --border: #e9e5f0;
+  --border-strong: #dcd6e8;
+
+  --text: #1b1726;
+  --text-muted: #6c6580;
+  --text-faint: #9b94aa;
+
+  --primary: #8b5cf6;
+  --primary-press: #7c3aed;
+  --primary-fg: #ffffff;
+  --primary-soft: rgba(139, 92, 246, 0.1);
+  --primary-border: rgba(139, 92, 246, 0.28);
+
+  --good: #16a34a;
+  --good-soft: rgba(22, 163, 74, 0.12);
+  --bad: #dc2626;
+  --bad-soft: rgba(220, 38, 38, 0.1);
+  --warn: #d97706;
+  --warn-soft: rgba(217, 119, 6, 0.12);
+
+  --shadow-card: 0 1px 2px rgba(27, 23, 38, 0.04), 0 8px 24px rgba(27, 23, 38, 0.05);
+  --shadow-overlay: 0 24px 60px rgba(15, 12, 19, 0.4);
+  --shadow-toast: 0 12px 32px rgba(15, 12, 19, 0.18);
+}
+
+.dark {
+  --bg: #0e0c13;
+  --surface: #16131d;
+  --surface-2: #1d1928;
+  --surface-3: #272035;
+
+  --border: #2a2438;
+  --border-strong: #382f4d;
+
+  --text: #f4f1fa;
+  --text-muted: #a49db6;
+  --text-faint: #726a86;
+
+  --primary: #9d7bf5;
+  --primary-press: #8b5cf6;
+  --primary-fg: #ffffff;
+  --primary-soft: rgba(157, 123, 245, 0.16);
+  --primary-border: rgba(157, 123, 245, 0.34);
+
+  --good: #34d399;
+  --good-soft: rgba(52, 211, 153, 0.14);
+  --bad: #f87171;
+  --bad-soft: rgba(248, 113, 113, 0.14);
+  --warn: #fbbf24;
+  --warn-soft: rgba(251, 191, 36, 0.14);
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 28px rgba(0, 0, 0, 0.45);
+  --shadow-overlay: 0 24px 60px rgba(0, 0, 0, 0.6);
+  --shadow-toast: 0 12px 32px rgba(0, 0, 0, 0.5);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* shadcn semantic aliases mapped to the Aura palette */
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--text);
+  --color-popover: var(--surface);
+  --color-popover-foreground: var(--text);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-fg);
+  --color-secondary: var(--surface-2);
+  --color-secondary-foreground: var(--text);
+  --color-muted: var(--surface-2);
+  --color-muted-foreground: var(--text-muted);
+  --color-accent: var(--surface-2);
+  --color-accent-foreground: var(--text);
+  --color-destructive: var(--bad);
+  --color-destructive-foreground: #ffffff;
+  --color-border: var(--border);
+  --color-input: var(--border-strong);
+  --color-ring: var(--primary);
+
+  /* Aura-specific tokens */
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-border-strong: var(--border-strong);
+  --color-faint: var(--text-faint);
+  --color-primary-press: var(--primary-press);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-border: var(--primary-border);
+  --color-good: var(--good);
+  --color-good-soft: var(--good-soft);
+  --color-bad: var(--bad);
+  --color-bad-soft: var(--bad-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+
+  /* shadows */
+  --shadow-card: var(--shadow-card);
+  --shadow-overlay: var(--shadow-overlay);
+  --shadow-toast: var(--shadow-toast);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--border);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.25s, color 0.25s;
+}
+
+::placeholder {
+  color: var(--text-faint);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
