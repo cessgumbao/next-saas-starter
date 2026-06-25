@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Lock, LogOut } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -34,6 +34,7 @@ function NavLink({ item }: { item: NavItem }) {
 }
 
 export function Sidebar() {
+  const router = useRouter();
   const { role, toast } = useWorkspace();
 
   return (
@@ -89,7 +90,10 @@ export function Sidebar() {
         <button
           type="button"
           title="Sign out"
-          onClick={() => toast("Signed out successfully")}
+          onClick={() => {
+            router.push("/login");
+            toast("Signed out successfully");
+          }}
           className="flex cursor-pointer p-1 text-muted-foreground transition-colors hover:text-foreground"
         >
           <LogOut className="size-[17px]" strokeWidth={1.8} />
